@@ -5,8 +5,9 @@ class Game {
         this.board = [];
         this.pairsClicked = 0;
         this.pairsGuessed = 0;
-        this.upCards = 0;
+        this.revealedCards = [];
         this.clickAllowed = true;
+        this.p5Text = "GAME OVER\nEat Kryptonite Bozo!!\n The forces of\n incompetence\n are triumphant!!!";
     }
 
     setupGame() {
@@ -35,42 +36,17 @@ class Game {
         } // end for i
     } //end setupGame
 
-    preloadGame() {
-        console.log(`preloading`);
-
-        this.images = [
-            { src: loadImage('./assets/Arthur.jpg') },
-            { src: loadImage('./assets/batkid.jpg') },
-            { src: loadImage('./assets/captain-armenia.jpg') },
-            { src: loadImage('./assets/deadpool.jpg') },
-            { src: loadImage('./assets/kryptonite.jpg') },
-            { src: loadImage('./assets/shazam.jpg') },
-            { src: loadImage('./assets/captain-avenger.jpg') },
-            { src: loadImage('./assets/the-tick.jpg') },
-            { src: loadImage('./assets/super.jpg') },
-            { src: loadImage('./assets/bananaman.jpg') },
-            { src: loadImage('./assets/cooperman.jpg') },
-            { src: loadImage('./assets/blunderwoman.jpg') }
-        ]
-
-    } // end preloadGame
-
     drawCards() {
-        console.log(`drawing cards`);
         // background(255, 204, 0);
         strokeWeight(2)
         stroke(51)
         for (const item of this.board) {
-            console.log(`${item.status} x:${item.x} y:${item.y}`);
-
             switch (item.status) {
                 case "down":
-                    image('spiderman.jpg', item.x, item.y, CARD_SIZE, CARD_SIZE);
-                    // rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
+                    rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
                     break;
                 case "up":
-                    image('spiderman.jpg', item.x, item.y, CARD_SIZE, CARD_SIZE);
-                    // rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
+                    image(window[item.img], item.x, item.y, CARD_SIZE, CARD_SIZE);
                     break;
                 default:
                     break;
@@ -79,47 +55,113 @@ class Game {
     } //end drawCards
 
     isCardClicked(mouseh, mousev) {
+        console.log(`CLICKED ALLOWED AFTER CLICK`, this.clickAllowed);
+
         for (const item of this.board) {
-            if (item.status != 'empty') {
-                if (mouseh >= item.x && mouseh <= item.x + CARD_SIZE && mousev >= item.y && mousehv <= item.y + CARD_SIZE) item.status = 'up';
-                this.upCards++
-                if (this.upCards = 2) this.checkPair()
-            } // end if not empty
+            if (item.status != 'empty' && item.status != 'up') {
+                if (mouseh >= item.x &&
+                    mouseh <= item.x + CARD_SIZE &&
+                    mousev >= item.y &&
+                    mousev <= item.y + CARD_SIZE) {
+                    item.status = 'up';
+                    console.log(`this is item `, item)
+                    this.revealedCards.push(item);
+                    console.log(this.revealedCards);
+
+                    if (this.revealedCards.length == 2) {
+                        console.log(this.revealedCards.length);
+                        this.checkPair();
+                    } // end if two cards are up
+                } // end if card clicked
+            }// end if card down
         } // end for
     }// end isCardClicked
 
-    checkPair(){
-        const upPair = []
-        for (const item of this.board) {
-            if (item.status == 'up') {
-                upPair.push(item);
-            }
-        } // end for loop
-        if (upPair[1].name == upPair[1].name) {
-                if (upPair[1].name == 'kryptonite') {
-                    // GAME OVER!!
-                } else {
-                    this.clickAllowed = false;
-                    this.pairsGuessed ++;
-                    if(pairsGuessed === 11){
-                        // GAME WON!!
-                    } else{
-                        // wait three seconds
-                        upPair[1].status = 'down';
-                        upPair[2].status = 'down';
-                        game.clickAllowed = true;
-                    } // end if else
+    checkPair() {
+        console.log(`checking pair`);
+        this.pairsClicked++;
+        document.getElementById(`message`).innerText = `You have had\n ${this.pairsClicked} attempts`
+        if (this.revealedCards[0].name != this.revealedCards[1].name) {
+            this.unmatchingPair();
+        } else {
+            if (this.revealedCards[0].name == 'kryptonite') {
+                this.endGameLose()
+            } else {
+                this.matchingPair()
 
-                } // end if kryptonite
-        }
-    }// endcheckPair
+            };
 
-} //end class Game
-
-class card {
-    constructor(name, img, status) {
-        this.name = name;
-        this.img = img;
-        this.status = status;
+        };
     }
-}// end class Card
+
+    testIfWon() {
+        if (this.pairsGuessed === 11) {
+            console.log(`game won`);
+            document.getElementById("message").innerText = `You are a true hero!!!\nThe people of the world salute you!`
+            setTimeout(function () { location.reload() }, 10000)
+        };
+    }
+
+    matchingPair() {
+        console.log(`matching pair `, this.revealedCards);
+
+        this.clickAllowed = false;
+        this.pairsGuessed++;
+        document.getElementById('score').innerText = this.pairsGuessed;
+        setTimeout(() => { this.removeMatchingCards(this.revealedCards), 3000 });
+    }
+
+    removeMatchingCards(upturnedCards) {
+        console.log(`removematchingpair `, upturnedCards);
+
+        for (let i = 0; i < upturnedCards.length; i++) {
+            delete upturnedCards[i].name;
+            upturnedCards[i].status = "empty"
+        }
+        this.revealedCards = []
+        console.log(`matching pair removed`)
+        console.log("revealed cards", this.revealedCards);
+    }
+
+    endGameLose() {
+        console.log(`it's kryptonite`);
+        game.clickAllowed = false
+        document.getElementById("message").innerText = `GAME OVER\nEat Kryptonite Bozo!!\n The forces of incompetence are triumphant!!!`
+        setTimeout(function () {
+            location.reload();
+        }, 3000)
+        // 
+    }
+
+    unmatchingPair() {
+        console.log(`not the same`);
+        game.clickAllowed = false
+        setTimeout(() => {
+            console.log(`unmatching pair`,);
+            this.revealedCards[0].status = 'down';
+            this.revealedCards[1].status = 'down';
+            console.log(`rev card 0 status `, this.revealedCards[0].status);
+
+            this.revealedCards = []
+            console.log(`revealed cards reset `, this.revealedCards);
+
+            game.clickAllowed = true;
+        }, 3000);
+        this.triggerMovements()
+    }
+
+    drawText() {
+        textSize(70);
+        textAlign(CENTER)
+        // text(this.p5Text, WIDTH/2, WIDTH/4)
+
+    }
+
+    triggerMovements() {
+        let numOfMovements = 0
+        if (this.pairsClicked == 3 || this.pairsClicked == 10 || this.pairsClicked == 15) numOfMovements++
+    }
+}
+
+}
+
