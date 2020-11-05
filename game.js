@@ -7,6 +7,7 @@ class Game {
         this.pairsGuessed = 0;
         this.revealedCards = [];
         this.clickAllowed = true;
+        this.ongoingMovement = 0
         this.speed = 10;
         this.p5Text = "GAME OVER\nEat Kryptonite Bozo!!\n The forces of\n incompetence\n are triumphant!!!";
     }
@@ -37,34 +38,44 @@ class Game {
         } // end for i
     } //end setupGame
 
-    drawCards() {
-        // put this in another function
+    
+
+    calculateMovement() {
         for (const item of this.board) {
-            if (item.x < item.columns * (CARD_SIZE + GRID_SPACING)) {
-                item.x + Math.min(
-                    (item.columns * (CARD_SIZE + GRID_SPACING)) - item.x,
-                    this.Speed
-                )
-            }
-            if (item.x > item.columns * (CARD_SIZE + GRID_SPACING)) {
-                item.x - Math.min(
-                    item.x - (item.columns * (CARD_SIZE + GRID_SPACING)),
-                    (this.Speed * -1)
-                )
-            }
-            if (item.y < item.columns * (CARD_SIZE + GRID_SPACING)) {
-                item.y + Math.min(
-                    (item.columns * (CARD_SIZE + GRID_SPACING)) - item.y,
-                    this.Speed
-                )
-            }
-            if (item.y > item.columns * (CARD_SIZE + GRID_SPACING)) {
-                item.y - Math.min(
-                    item.y - (item.columns * (CARD_SIZE + GRID_SPACING)),
-                    (this.Speed * -1)
-                )
-            }
-        }
+            if (item.status == 'moving1' || item.status == "moving2") {
+                if (item.x < item.columns * (CARD_SIZE + GRID_SPACING)) {
+                    item.x + Math.min(
+                        (item.columns * (CARD_SIZE + GRID_SPACING)) - item.x,
+                        this.Speed
+                    )
+                }
+                if (item.x > item.columns * (CARD_SIZE + GRID_SPACING)) {
+                    item.x - Math.min(
+                        item.x - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                        (this.Speed * -1)
+                    )
+                }
+                if (item.y < item.columns * (CARD_SIZE + GRID_SPACING)) {
+                    item.y + Math.min(
+                        (item.columns * (CARD_SIZE + GRID_SPACING)) - item.y,
+                        this.Speed
+                    )
+                }
+                if (item.y > item.columns * (CARD_SIZE + GRID_SPACING)) {
+                    item.y - Math.min(
+                        item.y - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                        (this.Speed * -1)
+                    )
+                } 
+                if (abs(item.x - item.columns * (CARD_SIZE + GRID_SPACING)) +
+                abs(item.x - item.columns * (CARD_SIZE + GRID_SPACING)) ==0){
+                    item.status = "down"
+                }
+            } // end if status moving
+        } //end for loop
+    } // end calculateMovement
+
+    drawCards() {
         strokeWeight(2)
         stroke(222, 191, 100)
         for (const item of this.board) {
@@ -93,8 +104,6 @@ class Game {
     } //end drawCards
 
     isCardClicked(mouseh, mousev) {
-        console.log(`CLICKED ALLOWED AFTER CLICK`, this.clickAllowed);
-
         for (const item of this.board) {
             if (item.status != 'empty' && item.status != 'up') {
                 if (mouseh >= item.x &&
@@ -102,13 +111,9 @@ class Game {
                     mousev >= item.y &&
                     mousev <= item.y + CARD_SIZE) {
                     item.status = 'up';
-
-                    console.log(`this is item `, item)
                     this.revealedCards.push(item);
-                    console.log(this.revealedCards);
 
                     if (this.revealedCards.length == 2) {
-                        console.log(this.revealedCards.length);
                         this.checkPair();
                     } // end if two cards are up
                 } // end if card clicked
@@ -118,7 +123,6 @@ class Game {
 
     checkPair() {
         let guessTxt = "";
-        console.log(`checking pair`);
         this.pairsClicked++;
         if (this.pairsClicked == 1) {
             guessTxt = `${this.pairsClicked}\n guess made`;
@@ -126,6 +130,7 @@ class Game {
             guessTxt = `${this.pairsClicked}\n guesses made`;
         }
         document.getElementById(`message`).innerText = guessTxt;
+
         if (this.revealedCards[0].name != this.revealedCards[1].name) {
             this.unmatchingPair();
         } else {
@@ -141,15 +146,12 @@ class Game {
 
     testIfWon() {
         if (this.pairsGuessed == 11) {
-            console.log(`game won`);
             document.getElementById("message").innerText = `You are a true hero!!!\nThe people of the world salute you!`
             setTimeout(() => { location.reload(), 10000 });
         };
     }
 
     matchingPair() {
-        console.log(`matching pair `, this.revealedCards);
-
         this.clickAllowed = false;
         this.pairsGuessed++;
         document.getElementById('score').innerText = this.pairsGuessed;
@@ -159,19 +161,15 @@ class Game {
 
     removeMatchingCards() {
         setTimeout(() => {
-            console.log(`removematchingpair `, this.revealedCards);
             for (let i = 0; i < this.revealedCards.length; i++) {
                 delete this.revealedCards[i].name;
                 this.revealedCards[i].status = "empty"
             }
             this.revealedCards = []
-            console.log(`matching pair removed`)
-            console.log("revealed cards", this.revealedCards);
         }, 3000)
     }
 
     endGameLose() {
-        console.log(`it's kryptonite`);
         game.clickAllowed = false
         document.getElementById("message").innerText = `GAME OVER\nEat Kryptonite Bozo!!\n The forces of incompetence are triumphant!!!`
         setTimeout(function () {
@@ -181,16 +179,12 @@ class Game {
     }
 
     unmatchingPair() {
-        console.log(`not the same`);
         game.clickAllowed = false
         setTimeout(() => {
-            console.log(`unmatching pair`,);
             this.revealedCards[0].status = 'down';
             this.revealedCards[1].status = 'down';
-            console.log(`rev card 0 status `, this.revealedCards[0].status);
 
             this.revealedCards = []
-            console.log(`revealed cards reset `, this.revealedCards);
 
             this.clickAllowed = true;
         }, 3000);
@@ -205,22 +199,52 @@ class Game {
     }
 
     triggerMovements() {
-        let numOfMovements = 0
-        if (this.pairsClicked == 3 || this.pairsClicked == 10 || this.pairsClicked == 15) numOfMovements++
+        // console.log(`trigger movement `, this.board.length);
+        this.swapCards()
     }
 
+    // let numOfMovements = 0
+    // if (this.pairsClicked == 3 || this.pairsClicked == 12 || this.pairsClicked == 18) numOfMovements++
 
-    movementSwapCards() {
+    // for(let i = 0; i <= numOfMovements; i++) { 
+    //     let movementSelector = Math.floor(Math.random() * 1.5)
+    //     switch (movementSelector) {
+    //         case 0:
+    //             break;
+    // case 1:
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    //     ;
+    // }
 
-        /*
+    swapCards() {
+        // console.log(`movement `, this.board.length);
+
+        for (let i = 0; i < 2; i++) {
+            const card1 = this.board[Math.floor(Math.random() * this.board.length)];
+            const card2 = this.board[Math.floor(Math.random() * this.board.length)];
+            let cardCoordinates = {
+                "column": Number(card1.column),
+                "row": Number(card1.row)
+            }
+            card1.column = card2.column;
+            card1.row = card2.row;
+            card1.status = "moving1"
+            card2.column = cardCoordinates.column;
+            card2.row = cardCoordinates.row;
+            card2.status = "moving2"
+        } // end for loop
+    }
+    /*
+    
 select cards
 store coordinates of card 1 in object
 copy card 2 coordinates to card 1
 copy card 1 coordinates to card 2
 set status to moving1 or 2 if it is not empty
-        */
-    }
-
+    */
 }
 
 
