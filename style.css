@@ -3,9 +3,14 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: green;
+    background-image: url("https://images.unsplash.com/photo-1505189303763-99eacdbca050?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2250&q=80");
+    background-size: cover;
+    background-position: center;
   }
   
+  h1 {
+    color:red;
+  }
   #mainflex {
     display: flex;  
     flex-direction: row;
@@ -25,8 +30,7 @@ body {
 }
 
 #messageBox, #scoresBox {
-  width: 250px;
-  height: 250px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -34,13 +38,28 @@ body {
 }
 
 #scoresBox {
-  background-color: darkred;
+  background-image: url('./assets/star1.svg');
+  background-size:  100%;
+  background-repeat: no-repeat;  
+  height: 350px;
+
+}
+
+#messageBox {
+  background-image: url('./assets/star2.svg');
+  background-size: cover;
+  height: 307px;
+}
+
+#messageBox > h3 {
+  font-size: 1.8em
 }
 
 h3 {
   font-size: 2em;
   text-align: center;
-  margin: 20px;
+  margin: 0px;
+  color:darkred;
 }
 
 #score {
@@ -49,4 +68,3 @@ h3 {
 
 
 
-  

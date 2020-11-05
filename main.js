@@ -33,11 +33,7 @@ function draw() {
 
 
 function mousePressed() {
-    console.log(`millis `,millis());
-    
-    console.log(`clickAllowed = `, game.clickAllowed);
-
-    if (game.clickAllowed = true) {
+    if (game.revealedCards.length < 2) {
         game.isCardClicked(mouseX, mouseY);
     } 
 }

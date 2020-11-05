@@ -7,6 +7,7 @@ class Game {
         this.pairsGuessed = 0;
         this.revealedCards = [];
         this.clickAllowed = true;
+        this.speed = 10;
         this.p5Text = "GAME OVER\nEat Kryptonite Bozo!!\n The forces of\n incompetence\n are triumphant!!!";
     }
 
@@ -37,16 +38,53 @@ class Game {
     } //end setupGame
 
     drawCards() {
-        // background(255, 204, 0);
+        // put this in another function
+        for (const item of this.board) {
+            if (item.x < item.columns * (CARD_SIZE + GRID_SPACING)) {
+                item.x + Math.min(
+                    (item.columns * (CARD_SIZE + GRID_SPACING)) - item.x,
+                    this.Speed
+                )
+            }
+            if (item.x > item.columns * (CARD_SIZE + GRID_SPACING)) {
+                item.x - Math.min(
+                    item.x - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                    (this.Speed * -1)
+                )
+            }
+            if (item.y < item.columns * (CARD_SIZE + GRID_SPACING)) {
+                item.y + Math.min(
+                    (item.columns * (CARD_SIZE + GRID_SPACING)) - item.y,
+                    this.Speed
+                )
+            }
+            if (item.y > item.columns * (CARD_SIZE + GRID_SPACING)) {
+                item.y - Math.min(
+                    item.y - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                    (this.Speed * -1)
+                )
+            }
+        }
         strokeWeight(2)
-        stroke(51)
+        stroke(222, 191, 100)
         for (const item of this.board) {
             switch (item.status) {
                 case "down":
+                    fill(88, 48, 199);
                     rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
                     break;
                 case "up":
-                    image(window[item.img], item.x, item.y, CARD_SIZE, CARD_SIZE);
+                    image(window[item.img], item.x, item.y, CARD_SIZE, CARD_SIZE)
+                    break;
+                case "moving1":
+                    fill(194, 14, 41);
+                    rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
+                    fill(88, 48, 199);
+                    break;
+                case "moving2":
+                    fill(96, 153, 31);
+                    rect(item.x, item.y, CARD_SIZE, CARD_SIZE);
+                    fill(88, 48, 199);
                     break;
                 default:
                     break;
@@ -64,6 +102,7 @@ class Game {
                     mousev >= item.y &&
                     mousev <= item.y + CARD_SIZE) {
                     item.status = 'up';
+
                     console.log(`this is item `, item)
                     this.revealedCards.push(item);
                     console.log(this.revealedCards);
@@ -78,16 +117,22 @@ class Game {
     }// end isCardClicked
 
     checkPair() {
+        let guessTxt = "";
         console.log(`checking pair`);
         this.pairsClicked++;
-        document.getElementById(`message`).innerText = `You have had\n ${this.pairsClicked} attempts`
+        if (this.pairsClicked == 1) {
+            guessTxt = `${this.pairsClicked}\n guess made`;
+        } else {
+            guessTxt = `${this.pairsClicked}\n guesses made`;
+        }
+        document.getElementById(`message`).innerText = guessTxt;
         if (this.revealedCards[0].name != this.revealedCards[1].name) {
             this.unmatchingPair();
         } else {
             if (this.revealedCards[0].name == 'kryptonite') {
-                this.endGameLose()
+                this.endGameLose();
             } else {
-                this.matchingPair()
+                this.matchingPair();
 
             };
 
@@ -95,10 +140,10 @@ class Game {
     }
 
     testIfWon() {
-        if (this.pairsGuessed === 11) {
+        if (this.pairsGuessed == 11) {
             console.log(`game won`);
             document.getElementById("message").innerText = `You are a true hero!!!\nThe people of the world salute you!`
-            setTimeout(function () { location.reload() }, 10000)
+            setTimeout(() => { location.reload(), 10000 });
         };
     }
 
@@ -108,19 +153,21 @@ class Game {
         this.clickAllowed = false;
         this.pairsGuessed++;
         document.getElementById('score').innerText = this.pairsGuessed;
-        setTimeout(() => { this.removeMatchingCards(this.revealedCards), 3000 });
+        this.testIfWon();
+        this.removeMatchingCards();
     }
 
-    removeMatchingCards(upturnedCards) {
-        console.log(`removematchingpair `, upturnedCards);
-
-        for (let i = 0; i < upturnedCards.length; i++) {
-            delete upturnedCards[i].name;
-            upturnedCards[i].status = "empty"
-        }
-        this.revealedCards = []
-        console.log(`matching pair removed`)
-        console.log("revealed cards", this.revealedCards);
+    removeMatchingCards() {
+        setTimeout(() => {
+            console.log(`removematchingpair `, this.revealedCards);
+            for (let i = 0; i < this.revealedCards.length; i++) {
+                delete this.revealedCards[i].name;
+                this.revealedCards[i].status = "empty"
+            }
+            this.revealedCards = []
+            console.log(`matching pair removed`)
+            console.log("revealed cards", this.revealedCards);
+        }, 3000)
     }
 
     endGameLose() {
@@ -145,7 +192,7 @@ class Game {
             this.revealedCards = []
             console.log(`revealed cards reset `, this.revealedCards);
 
-            game.clickAllowed = true;
+            this.clickAllowed = true;
         }, 3000);
         this.triggerMovements()
     }
@@ -161,7 +208,20 @@ class Game {
         let numOfMovements = 0
         if (this.pairsClicked == 3 || this.pairsClicked == 10 || this.pairsClicked == 15) numOfMovements++
     }
-}
+
+
+    movementSwapCards() {
+
+        /*
+select cards
+store coordinates of card 1 in object
+copy card 2 coordinates to card 1
+copy card 1 coordinates to card 2
+set status to moving1 or 2 if it is not empty
+        */
+    }
 
 }
+
+
 
