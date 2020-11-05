@@ -34,8 +34,6 @@ function draw() {
 
 function mousePressed() {
     if (game.revealedCards.length < 2) {
-        // console.log(game.board);
-        
         game.isCardClicked(mouseX, mouseY);
     }
 }

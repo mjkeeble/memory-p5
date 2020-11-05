@@ -8,7 +8,7 @@ class Game {
         this.revealedCards = [];
         this.clickAllowed = true;
         this.ongoingMovement = 0
-        this.speed = 10;
+        this.speed = 11;
         this.p5Text = "GAME OVER\nEat Kryptonite Bozo!!\n The forces of\n incompetence\n are triumphant!!!";
     }
 
@@ -38,37 +38,35 @@ class Game {
         } // end for i
     } //end setupGame
 
-    
-
     calculateMovement() {
         for (const item of this.board) {
             if (item.status == 'moving1' || item.status == "moving2") {
-                if (item.x < item.columns * (CARD_SIZE + GRID_SPACING)) {
-                    item.x + Math.min(
-                        (item.columns * (CARD_SIZE + GRID_SPACING)) - item.x,
+                if (item.x < item.column * (CARD_SIZE + GRID_SPACING)) {
+                    item.x += Math.min(
+                        (item.column * (CARD_SIZE + GRID_SPACING)) - item.x,
                         this.Speed
                     )
                 }
-                if (item.x > item.columns * (CARD_SIZE + GRID_SPACING)) {
-                    item.x - Math.min(
-                        item.x - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                if (item.x > item.columns* (CARD_SIZE + GRID_SPACING)) {
+                    item.x -= Math.min(
+                        item.x - (item.column * (CARD_SIZE + GRID_SPACING)),
                         (this.Speed * -1)
                     )
                 }
-                if (item.y < item.columns * (CARD_SIZE + GRID_SPACING)) {
-                    item.y + Math.min(
-                        (item.columns * (CARD_SIZE + GRID_SPACING)) - item.y,
+                if (item.y < item.row * (CARD_SIZE + GRID_SPACING)) {
+                    item.y += Math.min(
+                        (item.row * (CARD_SIZE + GRID_SPACING)) - item.y,
                         this.Speed
                     )
                 }
-                if (item.y > item.columns * (CARD_SIZE + GRID_SPACING)) {
-                    item.y - Math.min(
-                        item.y - (item.columns * (CARD_SIZE + GRID_SPACING)),
+                if (item.y > item.row * (CARD_SIZE + GRID_SPACING)) {
+                    item.y -= Math.min(
+                        item.y - (item.row * (CARD_SIZE + GRID_SPACING)),
                         (this.Speed * -1)
                     )
                 } 
-                if (abs(item.x - item.columns * (CARD_SIZE + GRID_SPACING)) +
-                abs(item.x - item.columns * (CARD_SIZE + GRID_SPACING)) ==0){
+                if (abs(item.x - item.column * (CARD_SIZE + GRID_SPACING)) +
+                abs(item.y - item.row * (CARD_SIZE + GRID_SPACING)) ==0){
                     item.status = "down"
                 }
             } // end if status moving
@@ -138,16 +136,24 @@ class Game {
                 this.endGameLose();
             } else {
                 this.matchingPair();
-
             };
-
         };
     }
 
     testIfWon() {
         if (this.pairsGuessed == 11) {
-            document.getElementById("message").innerText = `You are a true hero!!!\nThe people of the world salute you!`
-            setTimeout(() => { location.reload(), 10000 });
+            remove();
+            let endStr = `<div id="endMessage">`
+            endStr += `<p class="endMessageText">You are a true hero!!!</p>`
+            endStr += `<p class="endMessageText">the people</p>`
+            endStr += `<p class="endMessageText">of the world salute you!</p>`
+            endStr += `<p id="returnBtn">Click here to play again!</p>`
+            endStr += `</div>`
+
+            document.getElementById('mainflex').innerHTML = endStr
+            document.getElementById("returnBtn").addEventListener("click",function() {
+                location.reload()
+            });
         };
     }
 
@@ -166,15 +172,22 @@ class Game {
                 this.revealedCards[i].status = "empty"
             }
             this.revealedCards = []
-        }, 3000)
+        }, 1000)
     }
 
     endGameLose() {
-        game.clickAllowed = false
-        document.getElementById("message").innerText = `GAME OVER\nEat Kryptonite Bozo!!\n The forces of incompetence are triumphant!!!`
-        setTimeout(function () {
-            location.reload();
-        }, 3000)
+        remove();
+            let endStr = `<div id="endMessage">`
+            endStr += `<p class="endMessageText">Eat Kryptonite Bozo!!</p>`
+            endStr += `<p class="endMessageText">The forces of incompetence</p>`
+            endStr += `<p class="endMessageText">are triumphant!!!</p>`
+            endStr += `<p id="returnBtn">Click here to play again!</p>`
+            endStr += `</div>`
+            document.getElementById('mainflex').innerHTML = endStr
+            document.getElementById("returnBtn").addEventListener("click",function() {
+                location.reload()
+            });
+            document.getElementById("instructions").style.display = "none";
         // 
     }
 
@@ -187,8 +200,8 @@ class Game {
             this.revealedCards = []
 
             this.clickAllowed = true;
-        }, 3000);
-        this.triggerMovements()
+        }, 1500);
+        // this.triggerMovements()
     }
 
     drawText() {
