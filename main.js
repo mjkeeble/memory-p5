@@ -4,7 +4,7 @@ function preload() {
     arthurImg = loadImage('./assets/Arthur.jpg');
     batkidImg = loadImage('./assets/batkid.jpg')
     captainArmeniaImg = loadImage('./assets/captain-armenia.jpg')
-    deadpoolImg = loadImage('./assets/deadpool.jpg')
+    superianImg = loadImage('./assets/superian.jpg')
     blunderwomanImg = loadImage('./assets/blunderwoman.jpg')
     kryptoniteImg = loadImage('./assets/kryptonite.jpg')
     shazam = loadImage('./assets/shazam.jpg')
@@ -18,12 +18,14 @@ function preload() {
 function setup() {
     let canvas = createCanvas(WIDTH, HEIGHT);
     canvas.parent("canvas");
-    frameRate(30);
+    frameRate(60);
+    angleMode(DEGREES)
+
     game.setupGame();
 }
 
 function draw() {
-
+    game.calculateMovement()
     // console.log(`drawing`);
     clear()
     game.drawCards()

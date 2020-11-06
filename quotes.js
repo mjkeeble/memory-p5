@@ -1,0 +1,21 @@
+const quotes = [
+    "\"When destiny speaks, she speaks to me. She says 'Hi', by the way\"",
+    "\"We got a tiger by the tail\"",
+    "\" Whoa, check out the crime lab! It's all thorough and comlicated.\"",
+    "\"Perfect. You've got the brains. I got the everything else!\"",
+    "\"I have the reflexes of an Olympic level jungle catch.\"",
+    "\"I have there strength of ten, perhaps 20 men. A crowded bus stop... of men.\"",
+    "\"Come on over. It's good. It's warm. It's like the inside of bread\"", 
+    "\"Wicked men! Look at you, beetling away at your dunghill of contraband.\"",
+    "\"I say unto you... Stop your evil ways!\"",
+    "\"The key to successful falling lies in realizing that you area falling person.\"",
+    "\"Am I never naked? Or am I never *not* naked?\"",
+    "\" He may be on the compact side as heroes go, but that's just the way Destiney crumbles her cookies\"",
+    "\"The true hero stays above it all, using their keen senses to feel through the fog, to penetrate the din, and hear that one tiny voice on the wind, crying for help.\"",
+    "\"There is no God. There is only dog.\"",
+    "\"What if his job is to spread his wings and soar?\"",
+    "\" Your mouth says one thing, your guns say some other things, bald, bad man.\"",
+    "\" Okay. This is the part where you say 'Kill them all!' and I start punching.\"",
+    "\"Please tell me you're not considering teaming up with Mr. Stabby here?\"" ,
+    "\"I am a creature of action. I need an act to act upon when action-packed rescue drama is afoot.\""
+]
