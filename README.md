@@ -1,5 +1,6 @@
-![memory-3](https://user-images.githubusercontent.com/66460031/113012554-2accc580-917b-11eb-88de-a83402824169.png)
 # (Not so) Superhero Memory
+
+![memory-3](https://user-images.githubusercontent.com/66460031/113012554-2accc580-917b-11eb-88de-a83402824169.png)
 
 During the third week of Ironhacks Web Development Bootcamp we were tasked with creating a game using either DOM Manupulation or the P5.js animation library. After some thought I decided to develop a P5-based version of the classic Memory card game using the library's animation capabilities to spice things up!
 
